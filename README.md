@@ -1,3 +1,27 @@
+<div align="center">
+
+# <img src="https://github.com/collabdt/docs/blob/main/static/img/cdt-logo.svg" alt="CDT Logo" height="40" />
+#  `COLLAB DIGITAL TWINS`
+
+
+**Democratizing Digital Twin Technologies**
+
+</div>
+
+##  DOCUMENTATION
+
+<div align="center">
+<em>
+Communication is such an important aspect of good design. No matter how brilliant the product, if people cannot use it, it will receive poor reviews. It is up to the designer to provide the appropriate information to make the product understandable and usable.
+</em>
+<br>
+— Don Norman, <em>The Design of Everyday Things</em>
+</div>
+
+This repository provides essential documentation to use and co-develop the CDT platform.
+Don't hesitate to let us know if something is not clear and needs further description.
+Write us at info@collabdt.org
+
 # Website
 
 This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
