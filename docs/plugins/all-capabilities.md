@@ -85,12 +85,20 @@ Every handle is nullable, since a component can render before the viewer has fin
 `getItemsOfCategory('IFCSPACE')` finds the spaces whether or not they are visible, and they are hidden by default, being volumetric solids that would obscure everything inside them. Call `setItemsVisible(spaces, true)` as well.
 :::
 
+### What `getProperties` does not reach
+
+It forwards attributes and nothing else, so three things are outside it: the IFC `GlobalId` (`Guid` in an attributes read is a numeric index local to the model, not the 22-character identifier), quantities such as the floor area, and spatial containment such as the storey an element sits in.
+
+All three are reachable through the `fragments` handle on the same props — `model.getGuidsByLocalIds(localIds)` for the identity, and `model.getItemsData(localIds, { relations: … })` for the rest. [A mounted plugin against a real model](./mounted-plugin-example.md#what-getproperties-reaches-and-what-it-does-not) works through it.
+
+`@thatopen/components` may be imported for its types to describe what comes back. Type imports erase, so the built bundle is unaffected; importing it as a runtime value is a build error.
+
 ## Colouring elements
 
 Colour and opacity come from a hook rather than from `BimToolProps`, because they are scoped to the calling plugin. That also makes painting available from a sidebar tab, not only from a `bim.tools` panel.
 
 :::note
-`usePluginBimAppearance` is currently resolvable only from a plugin compiled into core. It is not among the entries CDT publishes to a mounted plugin — see [What a plugin can import](./mounting-a-plugin.md#what-a-plugin-can-import).
+`usePluginBimAppearance` is currently resolvable only from a plugin compiled into core. It is not among the entries CDT publishes to a mounted plugin — see [What a plugin can import](./mounting-a-plugin.md#what-a-plugin-can-import). A mounted plugin can still colour elements through the `fragments` handle it receives in props; [Colouring from a mounted plugin](./mounted-plugin-example.md#colouring-from-a-mounted-plugin) covers the four things that has to get right.
 :::
 
 ```tsx
@@ -313,6 +321,8 @@ Surfaces share state through hooks rather than props. The choice depends on whet
 | Org-wide settings | `usePluginConfig` | Yes |
 
 `usePluginState` is in-memory and scoped per plugin, so two plugins using the key `selected` never see each other's value. `usePluginStore` will hold a selection, but makes every click a database write.
+
+`usePluginStore.put` replaces a record whole, and `items` lags the write that caused it — so two quick edits to the same record lose the first unless the second merges against a copy the plugin kept itself. [Keeping a record in step with itself](./mounted-plugin-example.md#keeping-a-record-in-step-with-itself) has the pattern.
 
 [Example: one plugin, several surfaces](./hello-map-example.md) shows both in one plugin.
 
