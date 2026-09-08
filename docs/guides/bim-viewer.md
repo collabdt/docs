@@ -242,6 +242,24 @@ The **Settings** tab in the left panel controls the Three.js scene:
 - **Lighting** — position, intensity, colour.
 - **Renderer** — gamma correction, ambient occlusion, gloss, outline effects.
 
+## Placing and editing scene content
+
+Right-click anything you have added to the scene — a 3D object, a DXF drawing, a point cloud — to
+open its card: **Move**, **Rotate**, **Scale** and **Delete**. Holding the right button to pan the
+camera does not open it; only a right-click that stays put does. The same card is on the pin that
+floats above small objects, and the `move` action on a Files row opens it too.
+
+The file list and the scene stay in step. Delete a row and the object leaves the scene; place a
+file and its row is marked visible. Deleting from the viewport card asks for confirmation first.
+
+## Animated 3D models
+
+A GLB or glTF containing animation clips gets a fourth action on that card, **Animation**: pick a
+clip, play or pause, and set speed from 0.1x to 3x. Clips play automatically when the model loads.
+Models without clips do not show the action.
+
+Playback settings are not saved — reopening the model starts its first clip at normal speed.
+
 ## DXF / CAD overlay
 
 Upload a `.dxf` to overlay a 2D drawing inside the 3D scene. The platform parses it through [DXF-Viewer](https://github.com/vagran/dxf-viewer) into Three.js lines. You can position, scale, and rotate it relative to the IFC coordinate system, and toggle CAD layers individually.
