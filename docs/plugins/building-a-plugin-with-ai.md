@@ -1,7 +1,7 @@
 ---
 title: Building a plugin with AI
 description: A prompt template and a reusable skill for generating a CDT plugin, the mistakes models commonly make, and how to check the result.
-sidebar_position: 6
+sidebar_position: 7
 category: plugins
 status: draft
 last_updated: 2026-08-20
@@ -18,6 +18,7 @@ Without them, a model will invent an API that looks plausible and does not exist
 - [Create your first plugin](./create-your-first-plugin.md)
 - [Capabilities](./all-capabilities.md)
 - [Run your plugin](./mounting-a-plugin.md)
+- [Example: a mounted plugin against a real model](./mounted-plugin-example.md) — if the plugin reads a BIM model
 
 ## A prompt template
 
@@ -111,6 +112,91 @@ A plugin is *not* limited to one component. Source may span as many files as it 
 own `id`: contributions are de-duplicated by plugin and id, so reusing one silently drops the
 second. What is ruled out is lazy-loading part of the plugin itself.
 
+## What each surface is handed, and what it can reach
+
+This decides a plugin's architecture, so settle it before writing any component.
+
+- **`bim.tools` receives `BimToolProps`; `map.tools` and `map.layers` receive `{ map }`.**
+  A **`viewer.tabs` component receives no props at all**, and `data.pages`, `viewer.legends`
+  and `ui.dialogs` contribute hooks rather than components. `useBimViewer` and `useMapViewer`
+  are not published to a mounted plugin, so a tab cannot reach the viewer even indirectly.
+  Read the model in the toolbar component, publish the result to `usePluginState`, and have
+  the other surfaces leave requests there for the toolbar component to carry out.
+- **A toolbar panel unmounts when its dropdown closes**, taking its effects with it. So a
+  request left by another surface is only acted on while that panel is open. Have the tool
+  claim a flag in plugin state while mounted and let the other surfaces say why an action is
+  unavailable, rather than appearing to do nothing. This is also why `map.layers` exists:
+  anything that must outlive the panel belongs there.
+- **A mounted plugin colours through `fragments`, not the SDK.** `usePluginBimAppearance` is
+  not shimmed, but `model.highlight(localIds, material)` is reachable and works. See
+  *Colouring a model* below; it bypasses core's `ElementAppearance`, so plugin paint and the
+  Layers tab overwrite each other and CTRL+Z does not undo the plugin's.
+- **`lucide-react` is unshimmed.** Icon *names* work in a registration, where the host
+  resolves them. An icon inside a component body has to be inline SVG.
+
+## Reading a BIM model
+
+`getItemsOfCategory('IFCSPACE')` then `getProperties(items, [...])` is the whole documented
+path, and it reaches **attributes only**. Three things a real plugin wants are outside it:
+
+- the IFC `GlobalId` — `Guid` in an attributes read is a numeric index, not the 22-character
+  identifier, and it is the only durable record key there is
+- quantities (`IfcElementQuantity`), where floor area lives
+- spatial containment, i.e. which storey something is in
+
+All three come off the raw `fragments` handle on the same props:
+
+```ts
+const model = fragments.list.get(modelId)
+const guids = await model.getGuidsByLocalIds(localIds)
+const data = await model.getItemsData(localIds, {
+  attributesDefault: true,
+  relations: { IsDefinedBy: { attributes: true, relations: true },
+               Decomposes: { attributes: true, relations: false } },
+})
+```
+
+`@thatopen/components` as a **type-only** import is correct and expected here; type imports
+erase and the guard stays happy. Walk the returned relations defensively with a depth cap —
+a quantity sits at a different depth in IFC2X3 than in IFC4 — and treat a missing value as a
+normal model. Plenty of real exports carry no quantities, and many carry no `IfcSpace` at all.
+
+`IFCSPACE` is hidden by default, so anything acting on a space calls
+`setItemsVisible(items, true)` first. Scan once per `modelIds.join('|')` and hold the in-flight
+promise in **module scope**, not plugin state: a state claim is an effect dependency, so a scan
+held there cancels itself on the render its own result causes.
+
+## Colouring a model
+
+`MaterialDefinition.color` is typed `THREE.Color`, but fragments only reads `.r`, `.g` and `.b`,
+so a plugin that cannot import three passes three numbers and casts:
+
+```ts
+const material = { color: { r, g, b }, opacity: 1, transparent: false,
+                   preserveOriginalMaterial: false } as unknown as FRAGS.MaterialDefinition
+await model.highlight(localIds, material)
+await model.resetHighlight(localIds)
+```
+
+Four rules, each of which bites:
+
+- **`preserveOriginalMaterial: false`.** At `true` fragments skips deduplication and spends one
+  of the model's ~65 500 material slots per element per call. Bucket by colour, one call each.
+- **Convert sRGB to linear** — `new THREE.Color(hex)` does, and that is what core passes, so
+  raw sRGB gives colours that do not match the rest of the app.
+- **`setItemsVisible(items, true)` first** for anything hidden by default, `IFCSPACE` included.
+- **Paint outlives the panel** that applied it: it is a change to the model, not component
+  state. Do not clear it in a cleanup function, and give the user a way to turn it off.
+
+## Storing records
+
+`usePluginStore.put` replaces a record whole, and `items` lags the write that caused it. Two
+edits to one record in quick succession therefore lose the first. Keep a ref of what was last
+written per key and merge against that as well as the store, setting it **before** the await.
+
+Key records by something durable — the IFC `GlobalId`, not `modelId::localId`, which is only
+meaningful while that model is open and whose `modelId` is the file name.
+
 ## Steps
 
 1. **Scaffold with explicit flags** rather than prompts, so the run is reproducible. Run it
@@ -149,6 +235,14 @@ second. What is ruled out is lazy-loading part of the plugin itself.
 4. **Keep every user-visible string** in `manifest.json`'s `messages` and read it with
    `usePluginTranslations()`, passing an inline English fallback at each call. Translate the
    `fr` and `es` blocks, which start as copies of the English ones.
+
+   **A mounted plugin's `messages` do not reach the platform's catalog today**, so every
+   lookup falls back. The inline fallbacks cover components; `titleKey`, `labelKey` and
+   `emptyKey` have none, so write those three as English prose rather than as keys.
+
+   **A `data.pages` row cannot be typed.** The registration pins it to
+   `Record<string, unknown>` and the scaffolder emits `strict: true`, so build rows with your
+   own type and narrow inside each column and in `onRowClick`.
 
 5. **Build:**
 

@@ -52,4 +52,5 @@ Treat a plugin as any other dependency being granted full access, and read it be
 2. [Capabilities](./all-capabilities.md) — everything a plugin can add, and what each contribution receives
 3. [Run your plugin](./mounting-a-plugin.md) — building, loading and enabling one
 4. [Example: one plugin, several surfaces](./hello-map-example.md) — how the surfaces work together
-5. [Building a plugin with AI](./building-a-plugin-with-ai.md) — a prompt, and the mistakes to expect
+5. [Example: a mounted plugin against a real model](./mounted-plugin-example.md) — what a runtime-loaded plugin can and cannot reach
+6. [Building a plugin with AI](./building-a-plugin-with-ai.md) — a prompt, and the mistakes to expect
