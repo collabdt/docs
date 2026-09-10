@@ -30,9 +30,19 @@ Load a BIM model, navigate it in 3D, read its property sets, and use the openBIM
 
 The conversion happens once. Subsequent loads stream the cached `.frag` and are much faster.
 
-**Supported formats** beyond IFC: glTF / GLB, FBX, OBJ, Collada, DXF, LAZ / LAS / COPC.
+**Supported formats** beyond IFC: glTF / GLB, FBX, OBJ, Collada, DXF, LAS / LAZ / COPC / E57.
 
 **Result:** the model is visible in the viewport and selectable.
+
+### The File tab
+
+The **File** tab holds four resizable sections, each collapsible and with its own **+** upload
+button: **BIM** (IFC/Fragments), **Models** (other 3D geometry), **Point Clouds**, and **Files**
+(CAD, media, documents). Drag the divider between two open sections to resize them.
+
+Every upload — regardless of section — shows the same progress bar, both on the row and as a
+toast, moving through **Uploading**, **Converting** (IFC and point clouds only) and
+**Finalising** as the record is saved.
 
 ## Navigate in 3D
 

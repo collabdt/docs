@@ -1,107 +1,111 @@
 ---
 sidebar_position: 3
-title: Point Cloud Viewer
-description: Load LiDAR or photogrammetry datasets, navigate them in 3D, and combine them with BIM and map context.
+title: Point Clouds in the BIM Viewer
+description: Upload a LAS, LAZ or E57 scan, convert it to a streaming octree, and place it alongside your IFC models.
 ---
 
-# Point Cloud Viewer
+# Point Clouds in the BIM Viewer
 
-The point cloud viewer visualizes large 3D scanned datasets directly in the browser. It is built on [Potree](https://potree.org/) — a WebGL renderer specifically designed to stream and display massive point clouds without overwhelming client memory.
+Point clouds load in the **BIM viewer**, in the same scene as your IFC models. There is no
+separate point cloud viewer — the standalone one was retired once the BIM viewer could stream
+clouds itself, so a scan and a model now share one camera, one clipping set and one
+measurement tool.
 
 ## Goal
 
-Load a point cloud, navigate it, change how it is coloured, and combine it with other CDT data.
+Upload a scan, watch it convert, place it against a model, and tune how it draws.
 
 ## Prerequisites
 
-- A CDT account.
-- A point cloud file in LAS, LAZ, COPC, or Potree BIN format. COPC is recommended for large datasets because it streams progressively.
+- A CDT account with access to a building.
+- A scan in **LAS**, **LAZ** or **E57** format.
+- A reachable conversion service (`POINTCLOUD_API_URL`). Self-hosters: see
+  [Deployment → Services](../deployment/services.md).
 
-## Load a dataset
+## Upload a scan
 
-**Goal:** get a point cloud into the viewer.
+**Goal:** get a cloud into the building.
 
-1. Open the Point Cloud Viewer from the left sidebar.
-2. Use the **File** tab → **Upload** to select your file. Files stream from MinIO on demand.
-3. Once loaded, the cloud appears in the viewport at its embedded coordinates.
+1. Open the **BIM viewer** and select the building.
+2. In the sidebar's **File** tab, find the **Point Clouds** section and use the **+** button.
+3. Pick your file. Two progress bars follow in turn:
+   - **Uploading** — the file is going to object storage.
+   - **Converting** — the service is building the Potree octree the viewer streams.
+4. When conversion finishes the row becomes viewable. No page reload is needed.
 
-**Result:** the dataset is visible and the camera is framed on it.
+**Result:** the scan is listed and can be switched on.
 
-## Navigate the scene
+A scan is only renderable once conversion succeeds; until then the row is listed but offers no
+**view** action. Two recovery actions appear when something goes wrong:
+
+| Icon | When it appears | What it does |
+|------|-----------------|--------------|
+| Refresh | The file uploaded but conversion did not finish | Re-runs the conversion |
+| Upload | The upload itself died, leaving a row with no object behind it | Removes the row and lets you re-pick the file |
+
+## Place a cloud against a model
+
+**Goal:** line the scan up with the design model.
+
+1. On the cloud's row, choose **Move**.
+2. Drag the pivot, or type exact offsets and rotations in the placement panel.
+3. The placement is saved to the file record, so it survives a reload.
+
+**Result:** the cloud sits where the model does.
+
+## Tune how points draw
+
+Sidebar → **Settings** → the point cloud block. It applies to every cloud in the scene except
+opacity, which is per cloud.
 
 | Control | What it does |
 |---------|--------------|
-| **Left-click + drag** | Orbit |
-| **Right-click + drag** | Pan |
-| **Scroll wheel** | Zoom |
-| **Double-click** | Set the orbit pivot point |
+| **Point budget** | How many points may be on screen at once. The main performance lever |
+| **Point size** | Base size in world units |
+| **Max size** | Upper bound in pixels, so near points do not become blobs |
+| **Size type** | `fixed`, `attenuated` (shrinks with distance) or `adaptive` |
+| **Shape** | `square`, `circle` or `paraboloid` |
+| **Opacity** | Per cloud. **Ghost** on the file row is the same value |
+| **Show octree boxes** | Draws the streaming node boxes — a diagnostic for streaming, not a display mode |
 
-The viewer renders billions of points smoothly using Potree's tiling: nearby points render at full density and distant clusters at progressively lower density (LOD).
+Colour comes from the scan itself. Elevation, intensity and classification colour modes are
+not currently exposed.
 
-**Result:** smooth navigation regardless of dataset size.
+## Navigate
 
-## Change how points are coloured
+Sidebar → **Settings** → **Camera Settings**.
 
-**Goal:** make the cloud easier to read by colouring by an attribute.
+- **Orbit** — left-drag to orbit, right-drag to pan, scroll to zoom.
+- **Walk** — first person. Move with **WASD** or the arrow keys; **Q** and **E** move down and
+  up. Set a **move speed**, and **lock elevation at** a height in metres to hold a constant eye
+  level while walking. Walk mode needs a perspective projection; it is unavailable under
+  orthographic.
 
-1. Open the **Style** panel for the loaded cloud.
-2. Pick a colour mode:
-   - **RGB** — uses captured colour, if present.
-   - **Elevation** — gradient by Z coordinate.
-   - **Intensity** — return strength from the LiDAR sensor.
-   - **Classification** — standard LAS classes (ground, vegetation, building, etc.).
-   - **Flat colour** — single colour, useful for combining with other data.
-3. Optionally apply a **custom colour ramp** to a numeric attribute.
-4. Adjust **Point size** globally or scale by distance from the camera.
+## Measure and section
 
-**Result:** the cloud is recoloured according to your settings.
-
-## Overlay aerial imagery
-
-**Goal:** add a basemap underneath or beside the cloud for orientation.
-
-1. Open the **Imagery** subpanel in the layer settings.
-2. Pick a tile source.
-3. The imagery renders as a textured plane at the cloud's elevation.
-
-**Result:** the cloud sits over a recognizable basemap.
-
-## Compare multiple datasets
-
-**Goal:** load two surveys to compare epochs, or stitch partial scans of one site.
-
-1. Upload each file via the **File** tab.
-2. Each cloud has its own visibility toggle, position offset, and colour settings in the layer panel.
-3. Toggle visibility individually to flip between epochs, or display them simultaneously with different colours.
-
-**Result:** multiple clouds in one scene, independently controllable.
-
-## Combine with BIM and map context
-
-Because Potree is built on Three.js, point clouds can share a scene with IFC models. This supports:
-
-- Comparing as-built scans against design models
-- Verifying construction against drawings
-- Adding spatial context to BIM elements within a surveyed environment
-
-When placed on the map viewer, georeferenced clouds align with surrounding GIS layers automatically using their embedded CRS.
+Measurement and clipping operate on cloud geometry as well as model geometry, so you can
+measure from a scanned surface to a modelled element, and section through both at once.
 
 ## Supported formats
 
 | Format | Notes |
 |--------|-------|
-| **LAS** | Standard uncompressed point cloud format |
-| **LAZ** | Compressed LAS — smaller files, same data |
-| **COPC** | Cloud Optimized Point Cloud — best for large datasets, streams progressively |
-| **BIN** | Potree native binary format |
+| **LAS** | Standard uncompressed format. Read directly |
+| **LAZ** | Compressed LAS. Read directly, and the smaller upload |
+| **E57** | Common scanner exchange format. Transcoded to LAZ server-side before conversion |
 
-For large datasets, COPC is the recommended format because the viewer downloads only the points visible in the current viewport.
+Every format is converted server-side into a Potree octree; the viewer streams that octree
+rather than the original file. Conversion time scales with point count, so a large scan takes a
+while — the progress bar reports the converter's own percentage.
 
 ## Troubleshooting
 
-**Cloud appears as a single dot.** The CRS is unknown or wildly different from the map view. Check the file metadata and confirm the XYZ extent.
+**The scan uploaded but never appears in the Point Clouds section.** The file record needs a
+`point-cloud-file` type or a recognised extension. If neither is set it lands in the generic
+**Files** list instead.
 
-**Performance is poor.** Reduce point size or LOD level in the Style panel. Close other browser tabs that hold WebGL contexts.
+**Conversion finishes but nothing renders.** Check that the conversion service can reach object
+storage, and that the octree's `metadata.json` was written.
 
 For more, see [Troubleshooting → Viewers](../getting-started/troubleshooting.mdx#viewers).
 
@@ -110,4 +114,3 @@ For more, see [Troubleshooting → Viewers](../getting-started/troubleshooting.m
 - [Concepts → Point Clouds](../concepts/point-clouds.mdx)
 - [BIM Viewer](./bim-viewer.md)
 - [File Management](./file-management.md)
-- [Components → Point Cloud Tools](../components/point-cloud-tools.md)

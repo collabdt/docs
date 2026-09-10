@@ -54,9 +54,9 @@ WebGL-based viewer for IFC (Industry Foundation Classes) building models.
 - **Measurement:** Built-in measurement tools
 - **Export:** BCF (BIM Collaboration Format) for round-trip with Revit, Archicad
 
-### Potree (`potree-cdt`)
+### potree-core
 
-Point cloud renderer for LiDAR scans and photogrammetry datasets.
+Point cloud renderer for LiDAR scans and photogrammetry datasets, driven as an object inside the BIM viewer's Three.js scene rather than as a viewer of its own.
 
 - **Structure:** Octree LOD (level-of-detail) — only visible geometry is loaded
 - **Performance:** Handles billions of points with flythrough smoothness
@@ -88,7 +88,6 @@ export const AppProvider = compose([
   DatasetsProvider,
   FilesProvider,
   BuildingsProvider,
-  PointCloudProvider,
   PermissionsProvider,
 ])
 ```
@@ -103,7 +102,6 @@ export const AppProvider = compose([
 | **PermissionsProvider** | Current user, role, CASL ability | `usePermissions()` |
 | **MapProvider** | MapLibre instance, active layers, viewport | `useMap()` |
 | **BimProvider** | IFC viewer engine, loaded fragments, selection | `useBim()` |
-| **PointCloudProvider** | Potree viewer, loaded scenes | `usePointCloud()` |
 | **MenusProvider** | Sidebar/toolbar menu open/closed state | `useMenus()` |
 | **ToolsProvider** | Active tool per viewer (measure, annotate, etc.) | `useTools()` |
 | **ContentProvider** | Which panel is shown, current view mode | `useContent()` |
@@ -146,10 +144,10 @@ Currently synchronized via polling; real-time collaboration (shared cursors, liv
 
 ### Viewer Layout
 
-All three viewers share the same chrome:
+Both viewers share the same chrome:
 
 - **Left sidebar:** Navigation, data browser (buildings, sites, files)
-- **Main viewport:** Viewer canvas (map, BIM, or point cloud)
+- **Main viewport:** Viewer canvas (map or BIM)
 - **Right panel:** Details/properties, comments, measurements
 - **Bottom toolbar:** Tools, datasets toggle, share, settings, language
 
@@ -215,7 +213,7 @@ See [Internationalization](./internationalization.mdx) for full i18n architectur
 
 ## Common Gotchas
 
-- **Viewer refs:** Viewers (MapLibre, Potree, That Open Company) maintain internal mutation state. Store refs in `useRef`, not state.
+- **Viewer refs:** Viewers (MapLibre, That Open Company) maintain internal mutation state. Store refs in `useRef`, not state.
 - **State sync:** Map viewport + building selection must stay in sync across panels. Use `useEffect` dependencies carefully.
 - **Memory:** Large IFC/point cloud files load into browser memory. Monitor DevTools → Memory for leaks on viewer switches.
 - **Permissions:** UI controls hide via `PermissionsProvider`, but always verify on API side — frontend checks are for UX only.

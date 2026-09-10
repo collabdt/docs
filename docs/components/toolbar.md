@@ -8,7 +8,7 @@ last_updated: 2024-01-15
 
 # Toolbar
 
-Renders a floating toolbar anchored to the bottom center of the viewport. The toolbar displays different tool sets depending on which viewer is active (map, BIM, or point cloud). Each tool is rendered as a `ToolbarButton` within a `Menubar` container.
+Renders a floating toolbar anchored to the bottom center of the viewport. The toolbar displays different tool sets depending on which viewer is active (map or BIM). Each tool is rendered as a `ToolbarButton` within a `Menubar` container.
 
 ## Usage
 
@@ -23,7 +23,7 @@ import { ViewerNames } from '@collabdt/core/types';
 
 | Prop | Type | Required | Default | Description |
 |------|------|----------|---------|-------------|
-| `viewer` | `ViewerKey` | Yes | — | Determines which set of tools to display (`map`, `bim`, or `pointcloud`). A plugin page key (`plugin:<id>:<page>`) renders nothing. |
+| `viewer` | `ViewerKey` | Yes | — | Determines which set of tools to display (`map` or `bim`). A plugin page key (`plugin:<id>:<page>`) renders nothing. |
 
 ## Behaviour
 
@@ -31,15 +31,14 @@ import { ViewerNames } from '@collabdt/core/types';
 - Tools are loaded dynamically based on the viewer:
   - `ViewerNames.map` → `useMapToolbarTools()`
   - `ViewerNames.bim` → `useBimToolbarTools()`
-  - `ViewerNames.pointcloud` → `pointcloudToolbarTools()`
 - The toolbar is positioned fixed at the bottom center of the screen with `pointer-events-none` on the container (individual buttons handle their own pointer events).
 - Wraps all toolbar buttons in a `SubmenuProvider` to support tools with nested submenus.
 
 ## Design Decisions
 
-Toolbar is intentionally a thin, stateless component — it receives the active viewer and renders the appropriate tool set, nothing more. All tool definitions and their behaviour live in viewer-specific files (`mapTools`, `bimToolbar`, `pointcloudToolbarTools`) rather than in Toolbar itself, so adding or changing tools for a viewer never requires touching this component.
+Toolbar is intentionally a thin, stateless component — it receives the active viewer and renders the appropriate tool set, nothing more. All tool definitions and their behaviour live in viewer-specific files (`mapTools`, `bimToolbar`) rather than in Toolbar itself, so adding or changing tools for a viewer never requires touching this component.
 
-The toolbar only renders for viewers that have tools (`map`, `bim`, `pointcloud`). Data viewers like Buildings, Sites, and Files return `null` — their actions live in `HeaderButtons` and `DetailActions` instead. This is a deliberate separation: spatial viewers need persistent, floating tool access; data viewers do not.
+The toolbar only renders for viewers that have tools (`map`, `bim`). Data viewers like Buildings, Sites, and Files return `null` — their actions live in `HeaderButtons` and `DetailActions` instead. This is a deliberate separation: spatial viewers need persistent, floating tool access; data viewers do not.
 
 The toolbar is positioned fixed at the bottom-center of the screen and sits above the viewer content via `z-10`. `pointer-events-none` is set on the container so the toolbar doesn't block map interaction in the areas between buttons — `pointer-events-auto` is restored on individual buttons inside `ToolbarButton`.
 
@@ -54,4 +53,3 @@ No CASL permission checks in this component.
 - [SubmenuProvider](/docs/components/toolbar) — Context provider for submenu state
 - [useMapToolbarTools](/docs/components/toolbar) — Tool definitions for the map viewer
 - [useBimToolbarTools](/docs/components/toolbar) — Tool definitions for the BIM viewer
-- [pointcloudToolbarTools](/docs/components/toolbar) — Tool definitions for the point cloud viewer

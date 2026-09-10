@@ -11,13 +11,12 @@ last_updated: 2026-08-17
 
 A capability is a place in CDT where a plugin can add something. A plugin declares the capabilities it uses in its manifest, then calls `ctx.register()` once per contribution.
 
-These eight are the whole list. Registering anything else is a compile error, and registering a capability that is not declared in the manifest throws.
+These seven are the whole list. Registering anything else is a compile error, and registering a capability that is not declared in the manifest throws.
 
 | Capability | Where it appears | Fields |
 |---|---|---|
 | `map.tools` | Map toolbar | `id`, `label`, `icon`, `component` |
 | `bim.tools` | BIM toolbar | `id`, `label`, `icon`, `component` |
-| `pointcloud.tools` | Point-cloud toolbar | `id`, `label`, `icon`, `component` |
 | `map.layers` | Drawn on the map | `id`, `component` |
 | `viewer.legends` | Legend card, map and BIM viewer | `id`, `title`, `useLegend`, optional `viewers` |
 | `viewer.tabs` | Viewer sidebar, as a tab | `id`, `labelKey`, `icon`, `component`, optional `viewers` |
@@ -48,12 +47,6 @@ Each toolbar passes its own viewer to the component as props:
 // map.tools
 interface MapToolProps {
   map: import('maplibre-gl').Map | null
-}
-
-// pointcloud.tools
-interface PointCloudToolProps {
-  viewer: unknown   // Potree ships no types; narrow it in the plugin
-  ready: boolean
 }
 
 // bim.tools
@@ -237,7 +230,7 @@ Import `ViewerNames` from `@collabdt/core/plugins-sdk`; it is exported as a valu
 :::tip Say where it goes
 Omitting `viewers` means every viewer, which is rarely a location anyone chose. `create-cdt-plugin` now writes the list explicitly, taken from the viewer surfaces you scaffolded with — pick `bim.tools` and a tab, and you get `viewers: ['bim']`.
 
-Only `'map'`, `'bim'` and `'pointcloud'` host tabs and legends. Any other name — a typo like `'BIM'`, or a `ViewerNames` member such as `settings` that is a route rather than a viewer — renders nowhere; the platform logs a warning naming the plugin and the value.
+Only `'map'` and `'bim'` host tabs and legends. Any other name — a typo like `'BIM'`, or a `ViewerNames` member such as `settings` that is a route rather than a viewer — renders nowhere; the platform logs a warning naming the plugin and the value.
 :::
 
 The component receives no props. It renders inside the panel, so it should fill the width and let the panel scroll.

@@ -35,31 +35,32 @@ Including point clouds in a digital twin:
 |---|---|
 | **LAS** | Standard binary format for LiDAR data. Stores XYZ, intensity, RGB, and classification per point |
 | **LAZ** | Losslessly compressed LAS. Typically 5–10× smaller; the default for storage and exchange |
-| **COPC** (Cloud Optimized Point Cloud) | A spatial index built into the LAZ container. Enables progressive tile-based streaming — the viewer only downloads the points visible in the current viewport |
-| **BIN** | Potree native binary format, generated during the Potree conversion pipeline |
+| **E57** | Common scanner exchange format. CDT transcodes it to LAZ before conversion |
 
-**COPC is the recommended format for CDT.** Because it supports streaming, multi-gigabyte datasets are practical on consumer hardware and mobile devices — the viewer does not need to download the full dataset before rendering begins.
+CDT accepts LAS, LAZ and E57 on upload. Whichever you send, the file is converted server-side into a **Potree octree** — a spatial tree of tiles at multiple detail levels — and it is that octree the viewer streams. The original file is kept but never rendered directly, so the upload format affects transfer size and conversion time rather than playback.
 
 ## How CDT Renders Point Clouds
 
-CDT's point cloud viewer is built on [Potree](https://potree.org/), a WebGL-based renderer designed for large-scale point cloud visualization. Potree uses an **octree-based level-of-detail (LOD)** system:
+Point clouds render inside the **BIM viewer**, through [potree-core](https://github.com/tentone/potree-core) — a WebGL renderer for large point clouds, driven as an ordinary object in the BIM scene's Three.js graph. It uses an **octree-based level-of-detail (LOD)** system:
 
 1. The dataset is pre-organized into a spatial tree of tiles at multiple detail levels
 2. The viewer requests only the tiles covering the current viewport and camera distance
 3. Close tiles are rendered at full density; distant tiles at progressively coarser density
 4. As the camera moves, new tiles are streamed in and low-priority tiles are evicted
 
-This keeps memory usage bounded regardless of total dataset size. Potree can render billions of points smoothly even on mobile devices.
+This keeps memory usage bounded regardless of total dataset size.
 
-Because Potree is built on Three.js — the same 3D engine as CDT's BIM viewer — point clouds can be displayed in the same scene as IFC models, allowing direct visual comparison between design and as-built.
+Because the cloud is a member of the BIM scene rather than a separate viewer, it shares that scene's camera, clipping planes and measurement tools — which is what makes comparing design against as-built a single operation instead of two windows.
 
 ## Visualization Options
 
-- **Color mode** — RGB (if captured), elevation gradient, intensity, classification code, or flat color
-- **Custom colormaps** — apply gradient palettes to any numeric attribute
-- **Classification coloring** — standard LAS/LAZ classification codes (ground, low/medium/high vegetation, building, water, noise) are mapped to distinct colors automatically
-- **Point size** — global or distance-scaled
-- **Imagery overlay** — drape aerial imagery over the point cloud for visual reference
+- **Colour** — as captured in the scan
+- **Point budget** — the ceiling on points drawn at once, and the main performance lever
+- **Point size** — a base size, an upper bound in pixels, and `fixed`, `attenuated` or `adaptive` scaling
+- **Point shape** — square, circle or paraboloid
+- **Opacity** — per cloud, shared with the file row's ghost toggle
+
+Elevation, intensity and classification colour modes are not currently exposed.
 
 ## Multi-Dataset Scenes
 
@@ -69,12 +70,10 @@ Multiple point clouds can be loaded in one scene simultaneously — useful for:
 - Combining partial scans (indoor + outdoor, or multiple floors)
 - Overlaying point clouds from different sensors (terrestrial + aerial)
 
-Each dataset has its own visibility toggle, position offset, color settings, and classification filter in the layer panel.
+Each dataset has its own visibility toggle, placement and opacity.
 
-## Integration with BIM and GIS
+## Integration with BIM
 
-When a point cloud carries geographic coordinates (from GPS or ground control points), CDT places it in the correct position on the map viewer. It aligns with surrounding GIS layers — parcel boundaries, building footprints, topography — automatically.
+A point cloud and one or more IFC models occupy the same BIM scene, enabling comparison of design model against physical reality at element level. A cloud is positioned with the same placement editor the models use, and that placement is stored on the file record.
 
-Within the BIM viewer, a point cloud and one or more IFC models can occupy the same scene, enabling side-by-side comparison of design model and physical reality at element level.
-
-See the [Point Cloud Viewer guide](../guides/point-cloud-viewer) for upload and navigation instructions.
+See the [point cloud guide](../guides/point-cloud-viewer) for upload and navigation instructions.

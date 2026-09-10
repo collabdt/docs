@@ -8,7 +8,7 @@ last_updated: 2025-01-14
 
 # NavigationBar
 
-Top-level navigation bar that adapts its contents based on the current viewer mode. Displays a sidebar toggle button and viewer-specific search tools (Geocoder for map, BIMSearchTool for BIM, PCSearchTool for point cloud). Hides itself when the info sidebar is open in viewers that support it.
+Top-level navigation bar that adapts its contents based on the current viewer mode. Displays a sidebar toggle button and viewer-specific search tools (Geocoder for map, BIMSearchTool for BIM). Hides itself when the info sidebar is open in viewers that support it.
 
 ## Usage
 
@@ -28,8 +28,7 @@ This component accepts no props. It reads viewer state from `MenusContext` and s
 - **Viewer-aware rendering**: The component checks `currentViewer` from `MenusContext` to determine which search tool to display:
   - `ViewerNames.map` → renders `Geocoder`
   - `ViewerNames.bim` → renders `BIMSearchTool`
-  - `ViewerNames.pointcloud` → renders `PCSearchTool`
-- **Sidebar toggle**: A menu button appears when the current viewer is BIM, point cloud, or map. Clicking it calls `toggleInfoSidebar()`, which opens the [ViewerSidebar](./viewer-sidebar.md).
+- **Sidebar toggle**: A menu button appears when the current viewer is BIM or map. Clicking it calls `toggleInfoSidebar()`, which opens the [ViewerSidebar](./viewer-sidebar.md).
 - **Auto-hide**: When `openInfo` is true and the viewer needs a sidebar, the entire NavigationBar returns `null` to avoid visual overlap.
 - **Hover state**: The sidebar toggle button transitions from 70% to 100% opacity on hover.
 
@@ -45,6 +44,5 @@ This component is not gated by CASL permissions.
 
 - [Geocoder](/docs/components/top-navigation-bar) — map search tool
 - [BIMSearchTool](/docs/components/top-navigation-bar) — BIM search tool
-- [PCSearchTool](/docs/components/top-navigation-bar) — point cloud search tool
 - [Sidebar](/docs/components/app-sidebar) — sidebar context provider and hooks
 - [MenusContext](/docs/architecture/state-management) — viewer state management

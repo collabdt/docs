@@ -116,7 +116,7 @@ Check the SMTP variables (`EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USER`, `EMAIL_PASS`
 
 The first load of any IFC runs the conversion to Fragments format on the server, which is CPU-bound. Subsequent loads stream the cached `.frag` file and are much faster. If first loads are unacceptably slow, increase the CPU allocation for the application container.
 
-### "WebGL context lost" in the BIM or point cloud viewer
+### "WebGL context lost" in the BIM viewer
 
 Most often a memory pressure issue with very large models on a low-end GPU. Try:
 

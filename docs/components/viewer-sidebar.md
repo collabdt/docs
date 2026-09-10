@@ -1,6 +1,6 @@
 ---
 title: ViewerSidebar
-description: The shared sidebar shell for the map, BIM, and point cloud viewers, including the tab strip and tab panels.
+description: The shared sidebar shell for the map and BIM viewers, including the tab strip and tab panels.
 category: components
 status: draft
 last_updated: 2026-07-31
@@ -23,9 +23,9 @@ import { ViewerSidebarShell } from '@collabdt/core/components/ui/ViewerSidebar/S
 
 import type { ViewerSidebarTab } from '@collabdt/core/components/ui/ViewerSidebar/sidebarTabs';
 
-export function PointCloudSidebar({ pointcloudApiUrl, organization }) {
+export function BimSidebar({ organization }) {
   const tabs: ViewerSidebarTab[] = [
-    { id: 'file', content: <FileTab pointcloudApiUrl={pointcloudApiUrl} /> },
+    { id: 'file', content: <FileTab /> },
     { id: 'settings', content: <SettingsTab /> },
   ];
 
@@ -54,7 +54,7 @@ export function PointCloudSidebar({ pointcloudApiUrl, organization }) {
 
 - **Tab state lives in the store.** The shell reads `selectedTab` from `MenusContext` and dispatches `SET_SIDEBAR_SELECTED_TAB`. A viewer never wires this up itself.
 - **Only the active tab's `content` is mounted.** Switching tabs unmounts the previous panel, so a viewer-coupled panel does not keep subscriptions alive in the background.
-- **`selectedTab` survives a viewer switch, so it may name a tab the new viewer does not have.** When that happens the shell falls back to the first available tab and dispatches the correction, rather than rendering an empty body. Example: Sensors is active in the map, the user switches to the point cloud viewer (Files and Settings only) and lands on Files.
+- **`selectedTab` survives a viewer switch, so it may name a tab the new viewer does not have.** When that happens the shell falls back to the first available tab and dispatches the correction, rather than rendering an empty body. Example: Sensors is active in the map, the user switches to the BIM viewer, which does not offer it, and lands on Files.
 - **Disabled tabs are absent, not empty.** `enabled: false` removes the tab button. Gate on the declaration, not inside the panel — a tab the user can select but that renders nothing is a worse outcome than no tab.
 
 ## The tab strip
@@ -103,9 +103,9 @@ Nothing else changes — the strip, the icon, the keyboard handling and the fall
 
 ## Design Decisions
 
-The three viewer sidebars each had their own `TabSelector`, and the BIM and map copies were byte-identical. Consolidating them into `ViewerSidebarShell` plus a declarative tab list means the tab strip, its accessibility, and the store wiring have one implementation, and adding a tab to a viewer is a one-line change.
+Each viewer sidebar had its own `TabSelector`, and the BIM and map copies were byte-identical. Consolidating them into `ViewerSidebarShell` plus a declarative tab list means the tab strip, its accessibility, and the store wiring have one implementation, and adding a tab to a viewer is a one-line change.
 
-Tab *bodies* stay viewer-owned on purpose. `FileTab`, `LayersTab` and `SettingsTab` are each wired to a different engine (`@thatopen/components`, maplibre, Potree) and have genuinely diverged; forcing them behind a shared abstraction would trade real duplication for a leaky interface. Only `SensorsTab` and `CommunicationTab`, which were already the same code, moved into the shared module.
+Tab *bodies* stay viewer-owned on purpose. `FileTab`, `LayersTab` and `SettingsTab` are each wired to a different engine (`@thatopen/components`, maplibre) and have genuinely diverged; forcing them behind a shared abstraction would trade real duplication for a leaky interface. Only `SensorsTab` and `CommunicationTab`, which were already the same code, moved into the shared module.
 
 The strip is a hand-written tablist rather than the `Tabs` primitive in `components/ui/Tabs.tsx`. That primitive is styled with hardcoded `gray-*` values instead of theme tokens, and its Radix `TabsContent` would change the mount and unmount semantics of these viewer-coupled panels.
 

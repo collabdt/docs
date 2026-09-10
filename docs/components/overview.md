@@ -23,7 +23,6 @@ Start with [DataMenu](./data-menu.md) — it's the main shell for managing build
 - [FilePreview](./file-details.md)
 - [InfrastructureDetails](./infrastructure-details.md)
 - [NavigationBar](./top-navigation-bar.md)
-- [Point Cloud Viewer Tools](./point-cloud-tools.md)
 - [Settings Components](./settings.md)
 - [SiteDetails Components](./site-details.md)
 - [Toolbar](./toolbar.md)

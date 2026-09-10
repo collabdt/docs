@@ -26,7 +26,7 @@ Upload files to a building or site and understand where they go.
 
 The platform detects the file type, routes it to the right pipeline, stores the binary in MinIO, and creates a metadata record.
 
-**Result:** the files appear in the file list and are downloadable, previewable, and (if applicable) loadable in the BIM or point cloud viewers.
+**Result:** the files appear in the file list and are downloadable, previewable, and (if applicable) loadable in the BIM viewer.
 
 ## Supported file types
 
@@ -34,11 +34,15 @@ The platform detects the file type, routes it to the right pipeline, stores the 
 |----------|---------|
 | **BIM models** | IFC |
 | **3D geometry** | glTF, GLB, FBX, OBJ, Collada |
-| **Point clouds** | LAS, LAZ, COPC, BIN |
+| **Point clouds** | LAS, LAZ, COPC (`.copc.laz`), E57 |
 | **CAD drawings** | DXF |
 | **GIS data** | GeoJSON |
 | **Documents** | PDF |
 | **Media** | JPG, PNG, MP4, MP3, and other common video/audio formats |
+
+Point clouds are converted to a Potree octree on upload — three files (`metadata.json`,
+`octree.bin`, `hierarchy.bin`) that the viewer streams. Those are conversion *output*, not
+something you upload.
 
 ## What happens to an IFC on upload
 

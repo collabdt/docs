@@ -1,6 +1,6 @@
 ---
 title: Viewer
-description: Root component that orchestrates viewer switching between map, BIM, point cloud, and data views based on URL parameters.
+description: Root component that orchestrates viewer switching between map, BIM, and data views based on URL parameters.
 category: components
 status: draft
 last_updated: 2025-01-14
@@ -8,7 +8,7 @@ last_updated: 2025-01-14
 
 # Viewer
 
-Root viewer component that manages switching between different visualization modes (map, BIM, point cloud) and data management views (buildings, sites, files, etc.). Synchronizes the active viewer with URL search parameters and validates viewer availability based on organization settings.
+Root viewer component that manages switching between different visualization modes (map, BIM) and data management views (buildings, sites, files, etc.). Synchronizes the active viewer with URL search parameters and validates viewer availability based on organization settings.
 
 ## Usage
 
@@ -31,8 +31,8 @@ import { Viewer } from '@collabdt/core/components/Viewer';
 - **URL sync**: When the viewer changes via context (sidebar, toolbar), updates the URL. When URL changes directly, updates context.
 - **Circular update prevention**: Uses a ref to prevent infinite loops between URL and context synchronization.
 - **Language switching**: Sets the default language from `organization.languages[0]` on mount.
-- **Conditional rendering**: Map viewer is always mounted but hidden when inactive (preserves state). BIM and point cloud viewers mount/unmount on demand.
-- **Sidebar trigger**: Displays `SidebarTrigger` only for map, BIM, and point cloud viewers.
+- **Conditional rendering**: Map viewer is always mounted but hidden when inactive (preserves state). The BIM viewer mounts/unmounts on demand.
+- **Sidebar trigger**: Displays `SidebarTrigger` only for the map and BIM viewers.
 
 ## Design Decisions
  
