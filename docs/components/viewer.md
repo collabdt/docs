@@ -54,7 +54,6 @@ No permissions are necessary here.
 
 - [MapViewer](/docs/components/viewer) — Map visualization component
 - [BimViewer](/docs/components/viewer) — BIM model viewer
-- [PointCloudViewer](/docs/components/viewer) — Point cloud visualization
 - [DataMenu](/docs/components/data-menu) — Data management views
 - [Toolbar](/docs/components/toolbar) — Viewer toolbar controls
 - [MenusContext](/docs/architecture/state-management) — State management for current viewer
