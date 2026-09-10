@@ -10,9 +10,9 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 
 # Multi-Viewer Architecture
 
-CDT exposes data through three specialized viewers — Map, BIM, and Point Cloud — each optimized for a different data type and scale. They are not separate applications; they share the same underlying project data, coordinate system, and storage layer, and can be used in combination within a single session.
+CDT exposes data through two specialized viewers — Map and BIM — each optimized for a different data type and scale. They are not separate applications; they share the same underlying project data, coordinate system, and storage layer, and can be used in combination within a single session.
 
-## The Three Viewers
+## The Two Viewers
 
 ### Map Viewer
 **Library:** [MapLibre GL JS](https://maplibre.org/)  
@@ -28,12 +28,14 @@ The map viewer is the entry point for any CDT project. It provides geographic co
 
 The BIM viewer is designed for detailed interrogation of building models. It provides access to the full IFC schema — geometry, properties, spatial hierarchy, classification — alongside coordination tools (BCF topics, IDS validation, clipping planes, measurements). Models uploaded here are stored in the database and appear in the map viewer at their geographic position automatically.
 
-### Point Cloud Viewer
-**Library:** [Potree](https://potree.org/) (Three.js-based)  
-**Data types:** LAS, LAZ, COPC, BIN  
+### Point clouds, inside the BIM viewer
+**Library:** [potree-core](https://github.com/tentone/potree-core) (Three.js-based)  
+**Data types:** LAS, LAZ, E57  
 **Scale:** Building → site → urban area
 
-The point cloud viewer handles large reality capture datasets that would be impractical to load in a GIS tool. It uses tile-based streaming and LOD to render billions of points in real time. Because Potree shares Three.js with the BIM viewer, point clouds and IFC models can occupy the same scene simultaneously for as-built vs. design comparison.
+Reality capture datasets that would be impractical to load in a GIS tool render inside the BIM viewer rather than in a viewer of their own. Tile-based streaming and LOD keep billions of points interactive, and because the cloud is an object in the BIM scene it shares that scene's camera, clipping planes and measurement tools — which is what makes as-built against design a single comparison rather than two windows.
+
+Uploads are converted server-side into a Potree octree; see the [point cloud guide](../guides/point-cloud-viewer.md).
 
 ---
 
@@ -67,12 +69,12 @@ Proj4js handles reprojection for incoming open data that arrives in local coordi
 
 ## How the Viewers Interact
 
-A typical workflow moves between all three:
+A typical workflow moves between both:
 
 1. **Map Viewer** — find the site, stack open data layers (zoning, flood zones, transit) for context
 2. **Buildings panel** — select a building to open its asset list
 3. **BIM Viewer** — load the IFC model, inspect properties, validate against IDS, create BCF topics for coordination
-4. **Point Cloud Viewer** — load a LiDAR scan of the same building, compare as-built dimensions against the model
+4. **BIM Viewer** — load a LiDAR scan of the same building alongside the model, and compare as-built dimensions against it
 5. **Map Viewer** — return to urban scale, the model visible in its geographic context alongside GIS layers
 
 The share tool in each viewer generates a URL encoding the full viewer state (location, zoom, active assets, camera position), so any view can be handed to a collaborator who arrives at the exact same position.

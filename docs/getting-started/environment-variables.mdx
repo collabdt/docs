@@ -77,7 +77,7 @@ Required for sending multi-factor authentication codes at sign-in.
 |----------|-------------|---------|
 | `NEXT_PUBLIC_MARTIN_SERVER_URL` | Public base URL of the Martin tile server. | `https://tiles.example.com` |
 | `NEXT_PUBLIC_ORGANIZATIONAL_DATASETS_URL` | Base URL for organization-published GeoJSON datasets. | `https://data.example.com/datasets` |
-| `NEXT_PUBLIC_POINTCLOUD_API_URL` | Base URL of the Potree-compatible point cloud server. Required if point clouds are enabled. | `https://potree.example.com` |
+| `NEXT_PUBLIC_POINTCLOUD_API_URL` | Base URL of the point cloud conversion and streaming service. Required to upload or render point clouds in the BIM viewer. | `https://pointcloud.example.com` |
 | `MAPTILER_KEY` | Your deployment's own [MapTiler](https://cloud.maptiler.com) key, used for satellite imagery, terrain elevation, map fonts, administrative boundaries and building footprints. Optional — see the basemap fallback below. | `INSERT_YOUR_OWN_API_KEY` |
 
 **Basemap provider selection:** with `MAPTILER_KEY` set, the CDT platform requests imagery, elevation, fonts and building tiles from MapTiler on that key, and every built-in style is available. Unset, each source falls back to a key-free provider — Esri World Imagery for satellite, the open terrarium tiles for elevation, the OpenMapTiles font CDN for labels — and building footprints and administrative boundaries fall back to MapTiler's placeholder key, which only answers on `localhost`. The map therefore works out of the box for local development; production deployments should set their own key. See [Self-Hosting → Basemaps](../deployment/self-hosting.md#basemaps-imagery-terrain-and-buildings).

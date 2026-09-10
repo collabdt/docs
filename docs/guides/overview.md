@@ -16,7 +16,7 @@ If you have not signed in yet, start with the [Quickstart](../getting-started/qu
 |--------------|------|
 | Browse buildings, datasets, and the city on a map | [Map Viewer](./map-viewer.md) |
 | Open and inspect an IFC building model | [BIM Viewer](./bim-viewer.md) |
-| Visualize a LiDAR or photogrammetry scan | [Point Cloud Viewer](./point-cloud-viewer.md) |
+| Visualize a LiDAR or photogrammetry scan | [Point Clouds in the BIM Viewer](./point-cloud-viewer.md) |
 | Add and organize buildings and sites | [Buildings & Sites](./buildings-and-sites.md) |
 | Upload and manage files | [File Management](./file-management.md) |
 | Connect IoT and sensor data | [Sensors & IoT Data](./sensors-and-iot.md) |

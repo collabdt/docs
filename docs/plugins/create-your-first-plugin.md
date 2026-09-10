@@ -113,7 +113,7 @@ import type { BimToolProps } from '@collabdt/plugin-kit/types/bim'
 type Ctx = PluginContext<MapToolProps, BimToolProps>
 ```
 
-The order is map, BIM, point cloud, legend, and trailing slots you do not use can be left off. Reaching for `MapPluginContext & BimPluginContext` instead does not work: the second viewer's component ends up checked against a registration bound to `unknown`.
+The order is map, BIM, legend, and trailing slots you do not use can be left off. Reaching for `MapPluginContext & BimPluginContext` instead does not work: the second viewer's component ends up checked against a registration bound to `unknown`.
 
 A plugin that sets up timers or listeners outside React should also export `deactivate(ctx)`. CDT calls it when the plugin is switched off, then removes the contributions automatically.
 

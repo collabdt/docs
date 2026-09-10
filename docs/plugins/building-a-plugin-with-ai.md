@@ -1,7 +1,7 @@
 ---
 title: Building a plugin with AI
 description: A prompt template and a reusable skill for generating a CDT plugin, the mistakes models commonly make, and how to check the result.
-sidebar_position: 6
+sidebar_position: 7
 category: plugins
 status: draft
 last_updated: 2026-08-20
@@ -18,6 +18,7 @@ Without them, a model will invent an API that looks plausible and does not exist
 - [Create your first plugin](./create-your-first-plugin.md)
 - [Capabilities](./all-capabilities.md)
 - [Run your plugin](./mounting-a-plugin.md)
+- [Mounted plugins in practice](./mounted-plugins-in-practice.md) — if the plugin is loaded at runtime rather than compiled into core
 
 ## A prompt template
 
@@ -34,9 +35,9 @@ Scaffold it first, do not hand-write the files:
     --body example --yes
 
 Constraints, all of which are load-bearing:
-- The capability must be one of exactly these eight: map.tools, bim.tools,
-  pointcloud.tools, map.layers, viewer.legends, viewer.tabs, data.pages,
-  ui.dialogs. Nothing else exists. Do not invent one.
+- The capability must be one of exactly these seven: map.tools, bim.tools,
+  map.layers, viewer.legends, viewer.tabs, data.pages, ui.dialogs. Nothing
+  else exists. Do not invent one.
 - Every capability you register must also be listed in manifest.capabilities.
 - Do not import three, @thatopen/components, maplibre-gl or lucide-react as
   runtime values. Viewer instances arrive as props. Icons are named by string.
@@ -80,14 +81,14 @@ $ARGUMENTS may name the plugin, the surfaces it targets, or the behaviour wanted
 
 Read these before writing any code. Each one is a failure that looks like success.
 
-- **The capability must be one of exactly eight:** `map.tools`, `bim.tools`,
-  `pointcloud.tools`, `viewer.legends`, `map.layers`, `data.pages`, `viewer.tabs`,
-  `ui.dialogs`. Nothing else exists. Inventing a plausible name produces a plugin that builds,
+- **The capability must be one of exactly seven:** `map.tools`, `bim.tools`,
+  `viewer.legends`, `map.layers`, `data.pages`, `viewer.tabs`, `ui.dialogs`.
+  Nothing else exists. Inventing a plausible name produces a plugin that builds,
   loads, registers and shows nothing, with nothing in any log pointing at the cause. **If a
   plugin appears on the Plugins page but never renders, check the capability name first.**
 - **A `viewer.tabs` or `viewer.legends` registration with no `viewers` appears in every
   viewer.** That is what omitting the field means, so it fails as a location nobody chose
-  rather than as an error. Only `map`, `bim` and `pointcloud` host these; any other value
+  rather than as an error. Only `map` and `bim` host these; any other value
   renders nowhere, and the platform logs a warning naming the plugin and the value.
 - **Never import `three`, `@thatopen/components`, `maplibre-gl` or `lucide-react` as runtime
   values.** Viewer instances arrive as props and icons are named by string. A second copy of
@@ -144,7 +145,7 @@ second. What is ruled out is lazy-loading part of the plugin itself.
    type Ctx = PluginContext<MapToolProps, BimToolProps>
    ```
 
-   The order is map, BIM, point cloud, legend; trailing slots you do not use can be left off.
+   The order is map, BIM, legend; trailing slots you do not use can be left off.
 
 4. **Keep every user-visible string** in `manifest.json`'s `messages` and read it with
    `usePluginTranslations()`, passing an inline English fallback at each call. Translate the

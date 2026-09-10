@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-26T19:11:02.740Z",
+  "generatedAt": "2026-09-10T18:49:28.674Z",
   "audiences": [
     {
       "key": "userSidebar",
@@ -171,7 +171,7 @@
             },
             {
               "id": "guides/point-cloud-viewer",
-              "title": "Point Cloud Viewer",
+              "title": "Point Clouds in the BIM Viewer",
               "slug": "/docs/guides/point-cloud-viewer",
               "primary": null
             },
@@ -337,12 +337,6 @@
               "id": "components/overview",
               "title": "Overview",
               "slug": "/docs/components/overview",
-              "primary": null
-            },
-            {
-              "id": "components/point-cloud-tools",
-              "title": "Point Cloud Viewer Tools",
-              "slug": "/docs/components/point-cloud-tools",
               "primary": null
             },
             {
@@ -523,6 +517,12 @@
               "id": "plugins/hello-map-example",
               "title": "Example: one plugin, several surfaces",
               "slug": "/docs/plugins/hello-map-example",
+              "primary": null
+            },
+            {
+              "id": "plugins/mounted-plugins-in-practice",
+              "title": "Mounted plugins in practice",
+              "slug": "/docs/plugins/mounted-plugins-in-practice",
               "primary": null
             },
             {

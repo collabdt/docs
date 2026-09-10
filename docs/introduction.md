@@ -34,7 +34,7 @@ You want to run CDT on your own infrastructure or evaluate a hosted deployment.
 
 CDT is infrastructure for managing the relationship between a physical environment and its digital representation over time. The platform combines:
 
-- **Three integrated viewers** — a MapLibre-powered web map, an IFC BIM viewer (That Open Engine), and a Potree point cloud viewer — sharing a single coordinate system so a building uploaded in 3D appears in the right place on the map.
+- **Two integrated viewers** — a MapLibre-powered web map and an IFC BIM viewer (That Open Engine), which also streams point clouds — sharing a single coordinate system so a building uploaded in 3D appears in the right place on the map.
 - **Open data integration** — a federated catalogue of national, provincial, and municipal data portals, fetched live and overlaid on the map.
 - **Live data feedback loops** — IoT and sensor feeds linked to BIM elements or anywhere in the map, so design models evolve into operational digital twins.
 - **Multi-tenant collaboration** — organizations, role-based permissions, threaded comments, and BCF issue tracking.

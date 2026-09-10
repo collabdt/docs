@@ -14,7 +14,7 @@ How CDT's frontend, backend, and data layers connect to form a collaborative dig
 
 ## Overview
 
-CDT is a full-stack Next.js 15 application that combines three specialized visualization engines — maps, BIM/IFC models, and point clouds — with a REST API layer and a PostgreSQL + MinIO storage backend. The entire application, from server-side rendering to API routes, lives in a single Next.js deployment, which keeps infrastructure simple while still supporting a rich, interactive browser experience. Authentication, RBAC authorization, and multi-tenant organization support are built in at the framework level.
+CDT is a full-stack Next.js 15 application that combines two specialized visualization engines — maps and BIM/IFC models, the latter also rendering point clouds — with a REST API layer and a PostgreSQL + MinIO storage backend. The entire application, from server-side rendering to API routes, lives in a single Next.js deployment, which keeps infrastructure simple while still supporting a rich, interactive browser experience. Authentication, RBAC authorization, and multi-tenant organization support are built in at the framework level.
 
 ## High-Level Architecture
 
@@ -33,11 +33,11 @@ The browser layer is built on **Next.js 15** with **React 19**, using the App Ro
 
 ### Visualization engines
 
-CDT ships three distinct viewers, each optimized for a different type of spatial data:
+CDT ships two distinct viewers, each optimized for a different type of spatial data:
 
 - **MapLibre GL** (`maplibre-gl`) — renders 2D and 3D maps, vector tiles from Martin, and satellite/basemap layers. Includes measurement tools via `maplibre-gl-measures` and geospatial operations via Turf.js.
 - **That Open Company** (`@thatopen/components`) — a WebGL-based BIM viewer that parses and displays IFC files (the open standard for building models) directly in the browser using `web-ifc`. Supports fragment-based streaming for large models.
-- **Potree** (`potree-cdt`) — renders massive point cloud datasets (LiDAR scans and photogrammetry) using a level-of-detail octree structure so only visible geometry is loaded.
+- **potree-core** — renders massive point cloud datasets (LiDAR scans and photogrammetry) using a level-of-detail octree structure so only visible geometry is loaded. It draws inside the BIM viewer's scene, so a scan and a model share one camera.
 
 ### State management
 
@@ -54,7 +54,6 @@ Application state is organized into React Context providers, composed together a
 | `DatasetsProvider` | CKAN / open-data dataset state |
 | `FilesProvider` | File upload queue and metadata |
 | `BuildingsProvider` | Selected building and property cache |
-| `PointCloudProvider` | Potree viewer instance, loaded scenes |
 | `PermissionsProvider` | CASL ability instance for the current user |
 
 Data fetching uses **SWR** for cache-aware client-side requests and a thin HTTP adapter that normalizes all calls through `/api`. Charts are rendered with **Recharts**.
