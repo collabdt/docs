@@ -1,7 +1,7 @@
 ---
 title: Building a plugin with AI
 description: A prompt template and a reusable skill for generating a CDT plugin, the mistakes models commonly make, and how to check the result.
-sidebar_position: 6
+sidebar_position: 7
 category: plugins
 status: draft
 last_updated: 2026-08-20
@@ -18,6 +18,7 @@ Without them, a model will invent an API that looks plausible and does not exist
 - [Create your first plugin](./create-your-first-plugin.md)
 - [Capabilities](./all-capabilities.md)
 - [Run your plugin](./mounting-a-plugin.md)
+- [Mounted plugins in practice](./mounted-plugins-in-practice.md) — if the plugin is loaded at runtime rather than compiled into core
 
 ## A prompt template
 

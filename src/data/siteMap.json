@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-09T01:57:17.467Z",
+  "generatedAt": "2026-09-10T18:49:28.674Z",
   "audiences": [
     {
       "key": "userSidebar",
@@ -517,6 +517,12 @@
               "id": "plugins/hello-map-example",
               "title": "Example: one plugin, several surfaces",
               "slug": "/docs/plugins/hello-map-example",
+              "primary": null
+            },
+            {
+              "id": "plugins/mounted-plugins-in-practice",
+              "title": "Mounted plugins in practice",
+              "slug": "/docs/plugins/mounted-plugins-in-practice",
               "primary": null
             },
             {
